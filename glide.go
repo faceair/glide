@@ -19,6 +19,8 @@
 package main
 
 import (
+	"crypto/tls"
+	"net/http"
 	"path/filepath"
 
 	"github.com/Masterminds/glide/action"
@@ -33,6 +35,16 @@ import (
 	"fmt"
 	"os"
 )
+
+func init() {
+	if os.Getenv("HTTPS_PROXY") != "" {
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		err := os.Setenv("GIT_SSL_NO_VERIFY", "true")
+		if err != nil {
+			panic(err)
+		}
+	}
+}
 
 var version = "0.13.2-dev"
 
